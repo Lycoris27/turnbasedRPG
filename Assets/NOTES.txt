@@ -1,0 +1,20 @@
+GameManager - handles scripts that are game-wide, including;
+- Movement between scenes
+- Saving
+- Loading
+- Settings
+- 
+
+LevelManager - Handles scripts that are level-wide, including;
+- Grid management
+- Combat flow including;
+	- turn swapping
+
+Cursor - Handles player characters units movement and the players movement around a scene, also handles UI 
+
+
+
+Player Movement - needs to be split from player movement possibly
+
+
+
