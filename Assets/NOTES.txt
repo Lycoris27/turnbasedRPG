@@ -8,13 +8,18 @@ GameManager - handles scripts that are game-wide, including;
 LevelManager - Handles scripts that are level-wide, including;
 - Grid management
 - Combat flow including;
-	- turn swapping
+	- Turn swapping
+	- Possibly player pathfinding and movement
+
 
 Cursor - Handles player characters units movement and the players movement around a scene, also handles UI 
+- Might be better to move the cursor items to levelManager 
+- Might be good to have the cursor be a child of the LevelManager
 
 
-
-Player Movement - needs to be split from player movement possibly
-
+Character pathfinding - handles the characters' pathing
+- figures out a range of tiles that lead to a position the character wants to get to
+- Might be good to move the pathfinding into levelManager along with characterMovement
+- Mainly move it to levelManager to attempt to make a battle conductor which controls enemies and makes them work together to attack targets
 
 
