@@ -4,110 +4,180 @@ using UnityEngine;
 [ExecuteInEditMode]
 public class GridDetector : MonoBehaviour
 {
-    public Vector2 gridSize = new Vector2(1, 1); // Size of each grid cell
-    public int gridWidth = 10; // Corresponds to the number of columns (z-axis)
-    public int gridDepth = 3; // Corresponds to the number of rows (x-axis)
-    public string targetLayerName = "FloorTiles"; // Layer name of the objects to detect
-    public List<List<GameObject>> detectedObjects = new List<List<GameObject>>(); // List of lists to simulate a 2D array
-    public bool showOverlapBoxGizmos = true; // Toggle to show/hide the overlap box gizmos
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
+    [SerializeField] private int gridWidth = 0; // Corresponds to the number of columns (z-axis)
+    [SerializeField] private int gridDepth = 0; // Corresponds to the number of rows (x-axis)
 
-        // Draw grid along the xz-plane with gridDepth as the x-axis (depth) and gridWidth as the z-axis (width)
-        for (int x = 0; x < gridDepth; x++) // x corresponds to depth (gridDepth)
-        {
-            for (int z = 0; z < gridWidth; z++) // z corresponds to width (gridWidth)
-            {
-                Vector3 cellPosition = new Vector3(
-                    x * gridSize.x + gridSize.x / 2,
-                    0,
-                    z * gridSize.y + gridSize.y / 2
-                );
-
-                Gizmos.DrawWireCube(cellPosition, new Vector3(gridSize.x, 0, gridSize.y));
-
-                // Draw the overlap box gizmo if enabled
-                if (showOverlapBoxGizmos)
-                {
-                    Gizmos.color = Color.red; // Use a different color for the overlap box
-                    Vector3 boxSize = new Vector3((gridSize.x / 2) * 0.9f, 0.5f, (gridSize.y / 2) * 0.9f);
-                    Gizmos.DrawWireCube(cellPosition, boxSize * 2); // Multiply by 2 to match the actual overlap box size
-                }
-            }
-        }
-    }
+    private Dictionary<Vector2Int, GameObject> tileList = new();
+    private Dictionary<Vector2Int, GameObject> playerObjectsList = new();
+    private Dictionary<Vector2Int, GameObject> enemyObjectsList = new();
+    [SerializeField] private Dictionary<Vector2Int, List<GameObject>> gridDetectedObjects;
 
     private void Awake()
     {
-        // Initialize the detectedObjects list of lists
-        detectedObjects = new List<List<GameObject>>();
-        for (int x = 0; x < gridDepth; x++) // x corresponds to depth (gridDepth)
+        if (!Application.isPlaying) return;
+
+        gridDetectedObjects = new Dictionary<Vector2Int, List<GameObject>>();
+        for (int x = 0; x <= gridDepth; x++)
         {
-            detectedObjects.Add(new List<GameObject>());
-            for (int z = 0; z < gridWidth; z++) // z corresponds to width (gridWidth)
+            for (int z = 0; z <= gridWidth; z++)
             {
-                detectedObjects[x].Add(null); // Initialize with null
+                InitGrid(x, z);
             }
         }
+    }
+    private void InitGrid(int depth, int width)
+    {
+        Vector2Int position = new Vector2Int(depth, width);
 
-        DetectObjects();
+        if (!gridDetectedObjects.ContainsKey(position))
+        {
+            gridDetectedObjects[position] = new List<GameObject>();
+        }
+
+        // Add 4 null objects if not already added
+        while (gridDetectedObjects[position].Count < 4)
+        {
+            gridDetectedObjects[position].Add(null);
+        }
+    }
+    private void Start()
+    {
+        if (!Application.isPlaying) return;
+        FindForGrid();
     }
 
-    private void DetectObjects()
-    {
-        int targetLayer = LayerMask.NameToLayer(targetLayerName);
-        LayerMask layerMask = 1 << targetLayer; // Create a layer mask for filtering
 
-        // Clear the detected objects list before starting detection
-        for (int x = 0; x < gridDepth; x++) // x corresponds to depth (gridDepth)
+
+    private void FindForGrid()
+    {
+        GameObject[] playerObjects = GameObject.FindGameObjectsWithTag("Player");
+        GameObject[] enemyObjects = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject[] tileObjects = GameObject.FindGameObjectsWithTag("Tile");
+
+        foreach (GameObject tile in tileObjects)
         {
-            for (int z = 0; z < gridWidth; z++) // z corresponds to width (gridWidth)
-            {
-                detectedObjects[x][z] = null; // Reset to null before detection
-            }
+            if (tile == null) continue;
+
+            MovementTileScript moveTileScript = tile.GetComponent<MovementTileScript>();
+            if (moveTileScript == null) continue;
+
+            Vector2Int pos = moveTileScript.ReturnPosition();
+            EnsureGridKeyExists(pos);
+            gridDetectedObjects[pos][0] = tile;
+            tileList[pos] = tile;
         }
 
-        // Check for objects within each grid cell along the xz-plane
-        for (int x = 0; x < gridDepth; x++) // x corresponds to depth (gridDepth)
+        foreach (GameObject player in playerObjects)
         {
-            for (int z = 0; z < gridWidth; z++) // z corresponds to width (gridWidth)
+            if (player == null) continue;
+
+            CharacterAI characterAI = player.GetComponent<CharacterAI>();
+            if (characterAI == null) continue;
+
+            Vector2Int pos = characterAI.ReturnPosition();
+            EnsureGridKeyExists(pos);
+            gridDetectedObjects[pos][1] = player;
+            playerObjectsList[pos] = player;
+
+        }
+
+        foreach (GameObject enemy in enemyObjects)
+        {
+            if (enemy == null) continue;
+
+            CharacterAI enemyAI = enemy.GetComponent<CharacterAI>();
+            if (enemyAI == null) continue;
+
+            Vector2Int pos = enemyAI.ReturnPosition();
+            EnsureGridKeyExists(pos);
+            gridDetectedObjects[pos][1] = enemy;
+            enemyObjectsList[pos] = enemy;
+        }
+    }
+
+    private void EnsureGridKeyExists(Vector2Int pos)
+    {
+        if (!gridDetectedObjects.ContainsKey(pos))
+        {
+            gridDetectedObjects[pos] = new List<GameObject> { null, null, null, null };
+        }
+        else
+        {
+            while (gridDetectedObjects[pos].Count < 4)
             {
-                Vector3 cellPosition = new Vector3(
-                    x * gridSize.x + gridSize.x / 2,
-                    0,
-                    z * gridSize.y + gridSize.y / 2
-                );
+                gridDetectedObjects[pos].Add(null);
+            }
+        }
+    }
 
-                Debug.Log($"Checking cell at position: {cellPosition}");
+    private void OnDrawGizmos()
+    {
+        if (gridWidth > 0 && gridDepth > 0)
+        {
+            Gizmos.color = Color.green;
 
-                // Define the size of the overlap box to match the grid cell, with a slight reduction
-                Vector3 boxSize = new Vector3((gridSize.x / 2) * 0.9f, 0.5f, (gridSize.y / 2) * 0.9f);
-
-                // Perform the overlap check
-                Collider[] colliders = Physics.OverlapBox(
-                    cellPosition,
-                    boxSize,
-                    Quaternion.identity,
-                    layerMask // Use the layer mask to filter by the target layer
-                );
-
-                // Log the number of detected colliders in this cell
-                Debug.Log($"Number of colliders found: {colliders.Length}");
-
-                foreach (Collider collider in colliders)
+            for (int x = 0; x <= gridDepth; x++)
+            {
+                for (int z = 0; z <= gridWidth; z++)
                 {
-                    Debug.Log($"Detected object: {collider.gameObject.name} at position: {collider.transform.position}");
+                    Vector3 bottomLeft = new Vector3(x, 0, z);
+                    Vector3 topLeft = new Vector3(x, 0, z + 1);
+                    Vector3 bottomRight = new Vector3(x + 1, 0, z);
+                    Vector3 topRight = new Vector3(x + 1, 0, z + 1);
 
-                    // Ensure it's the correct layer before assigning
-                    if (collider.gameObject.layer == targetLayer)
-                    {
-                        detectedObjects[x][z] = collider.gameObject; // Store the detected object in the list of lists
-                        break; // Stop after storing the first detected object in the cell
-                    }
+                    Gizmos.DrawLine(bottomLeft, topLeft);
+                    Gizmos.DrawLine(bottomLeft, bottomRight);
+                    Gizmos.DrawLine(topLeft, topRight);
+                    Gizmos.DrawLine(bottomRight, topRight);
                 }
             }
+        }
+    }
+
+    // External access
+    public List<GameObject> ReturnTileData(Vector2Int pos) => gridDetectedObjects.ContainsKey(pos) ? gridDetectedObjects[pos] : null;
+
+    public GameObject ReturnPlayerTileData(Vector2Int pos)
+    {
+        return playerObjectsList[pos];
+    }
+    public GameObject ReturnEnemyTileData(Vector2Int pos)
+    {
+        return enemyObjectsList[pos];
+    }
+    public Dictionary<Vector2Int, GameObject> ReturnEnemyList()
+    {
+        return enemyObjectsList;
+    }
+    public Dictionary<Vector2Int, GameObject> ReturnPlayerList()
+    {
+        return playerObjectsList;
+    }
+
+
+    public Vector2Int ReturnGridSize() => new Vector2Int(gridDepth, gridWidth);
+    public void SetTileData(Vector2Int pos, int index, GameObject obj)
+    {
+        EnsureGridKeyExists(pos);
+        gridDetectedObjects[pos][index] = obj;
+    }
+    
+    public void MoveCharacter(Vector2Int pos, Vector2Int oldPos, GameObject obj)
+    {
+
+        gridDetectedObjects[oldPos][1] = null;
+        gridDetectedObjects[pos][1] = obj;
+
+        if (obj.tag == "Player")
+        {
+            playerObjectsList.Remove(oldPos);
+            playerObjectsList[pos] = obj;
+        }
+        else if (obj.tag == "Enemy")
+        {
+            enemyObjectsList.Remove(oldPos);
+            enemyObjectsList[pos] = obj;
         }
     }
 }

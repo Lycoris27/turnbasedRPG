@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class CharacterScript: MonoBehaviour
 {
-    
-    public int HPCur { get; private set; }
+    [SerializeField] private new string name; public string Name => name;
+
+    [Header("Character Prefabs")]
+    [SerializeField] private int HPCur; public int  HPCurrent => HPCur;
     [Range(0, 100)] public int HPMax;
 
     public Stats Atk;
@@ -15,12 +17,14 @@ public class CharacterScript: MonoBehaviour
     public Stats Lck;
     public Stats Def;
     public Stats Res;
+    public Stats Range;
     public Stats Mvmnt;
 
     private void Awake()
     {
         HPCur = HPMax;  
     }
+    /*
     public void TakeDamage (int damage)
     {
         damage -= Def.GetValue();
@@ -31,4 +35,5 @@ public class CharacterScript: MonoBehaviour
         HPCur -= damage;
         Debug.Log("take " + damage + " damage.");
     }
+    */
 }
