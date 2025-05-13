@@ -4,10 +4,6 @@ using UnityEngine;
 
 public class CursorDetect : MonoBehaviour
 {
-    
-    [SerializeField, Header("References")] private GridDetector gridDetector;
-    [SerializeField] private GameObject levelManager;
-
     private GameObject heldCharacter;
     [SerializeField] private CharacterAI characterAI;
 
@@ -20,6 +16,17 @@ public class CursorDetect : MonoBehaviour
     [SerializeField] private bool foundPlayer = false; // finds player or enemy
     [SerializeField] private bool foundEnemy = false; // determines if enemy is found
     [SerializeField] private bool finalCheck; // check for phase 3
+
+
+    private TurnScript tScript;
+    private GridEngager gDetect;
+
+    private void Awake()
+    {
+        tScript = GetComponent<TurnScript>();
+        gDetect = GetComponent<GridEngager>();
+    }
+
 
     private void OnEnable()
     {
@@ -35,8 +42,7 @@ public class CursorDetect : MonoBehaviour
     public void DetectCharacter(Vector2Int pos)
     {
         cursorPos = pos;
-        List<GameObject> tileData = gridDetector.ReturnTileData(cursorPos);
-        //print($"Checking position: {cursorPos}");
+        List<GameObject> tileData = gDetect.ReturnTileData(cursorPos);
         GameObject characterTile = tileData[1];
 
         if (characterTile == null)
@@ -68,18 +74,15 @@ public class CursorDetect : MonoBehaviour
             onMoveTile = false;
             foundPlayer = true;
             heldPosition = new Vector2Int(0, 0);
-            characterAI.ToggleDisplayGrid();
-            characterAI.ToggleCharacterMove();
-            levelManager.GetComponent<TurnScript>().CheckIfTurnChange();
+            //characterAI.ToggleDisplayGrid();
+            //characterAI.ToggleCharacterMove();
+            tScript.CheckIfTurnChange();
             return;
         }
         else if (playerMoving && onMoveTile)
         {
-            characterAI.SetPosition(cursorPos);
-            //gridDetector.SetTileData(heldPosition, 1, null);
-            //gridDetector.SetTileData(cursorPos, 1, heldCharacter);
-
-            gridDetector.MoveCharacter(cursorPos, heldPosition, heldCharacter);
+            //characterAI.SetPosition(cursorPos);
+            gDetect.MoveCharacter(cursorPos, heldPosition, heldCharacter);
 
             finalCheck = true;
             return;
@@ -89,12 +92,12 @@ public class CursorDetect : MonoBehaviour
             heldPosition = cursorPos;
             playerMoving = true;
             onMoveTile = true;
-            characterAI.ToggleDisplayGrid();
+            //characterAI.ToggleDisplayGrid();
             return;
         }
         else if (foundEnemy && !playerMoving)
         {
-            characterAI.ToggleDisplayGrid();
+            //characterAI.ToggleDisplayGrid();
         }
     }
     private void RegressPlayerMovement(float value)
@@ -102,17 +105,17 @@ public class CursorDetect : MonoBehaviour
         if (finalCheck)
         {
             finalCheck = false;
-            characterAI.SetPosition(heldPosition);
+            //characterAI.SetPosition(heldPosition);
 
-            gridDetector.SetTileData(heldPosition, 1, heldCharacter);
-            gridDetector.SetTileData(cursorPos, 1, null);
+            gDetect.SetTileData(heldPosition, 1, heldCharacter);
+            gDetect.SetTileData(cursorPos, 1, null);
             return;
         }
         else if (playerMoving)
         {
             playerMoving = false;
             onMoveTile = false;
-            characterAI.ToggleDisplayGrid();
+            //characterAI.ToggleDisplayGrid();
             heldPosition = new Vector2Int(-1, -1);
 
         }

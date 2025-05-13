@@ -9,56 +9,26 @@ using UnityEngine;
 public class CharacterAI : MonoBehaviour
 {
     private CharacterSheet eSheet;
-    private CharacterPathfinding epathfind;
-    private MovementDisplay eDisplay;
-    private CharacterMovement eMovement;
-
-    private bool tilesEngaged = false;
+    private bool canMove;
 
     private void Awake()
     {
         eSheet = GetComponent<CharacterSheet>();
-        epathfind = GetComponent<CharacterPathfinding>();
-        eDisplay = GetComponent<MovementDisplay>();
-        eMovement = GetComponent<CharacterMovement>();
+
     }
-    public bool CanCharacterMove() { return eMovement.GetIfMove(); }
-    public void ToggleCharacterMove() { eMovement.ToggleMove(); }
+    public bool CanCharacterMove() { return canMove; }
+    public void ToggleCharacterMove() {
+        if (canMove)
+        {
+            canMove = false;
+        }
+        if (!canMove)
+        {
+            canMove = true;
+        }
+             
+    }
     public void ReturnMovement() { eSheet.GetMovement(); }
 
     public Dictionary<string, int> ReturnStats() { return eSheet.GetStats(); }
-
-    public void SetPosition(Vector2Int pos) { eMovement.SetPosition(pos); }
-    public Vector2Int ReturnPosition() { return eMovement.ReturnPosition(); }
-
-    public void ToggleDisplayGrid()
-    {
-        
-        if (!tilesEngaged)
-        {
-            
-            epathfind.BeginPredictPathfinding();
-            tilesEngaged = true;
-        }
-        else if(tilesEngaged)
-        {
-            eDisplay.RemoveDisplayedTiles();
-            tilesEngaged = false;
-        }
-    }
-
-
-
-
-    public void ActivateMovement() // used to move character with autopathing, usually for enemies
-    {
-        // Finds the path the enemy needs to follow, creates a dictionary that is the most direct path to the player
-        Dictionary<Vector2Int, int> fScore = epathfind.BeginPathfinding();
-
-        // if fscore is sorted, moves the enemy along based on fscore
-        if (fScore != null)
-        {
-            eMovement.AutoMoveCharacter(fScore);
-        }
-    }
 }

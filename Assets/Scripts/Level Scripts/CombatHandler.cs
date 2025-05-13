@@ -5,7 +5,7 @@ using UnityEngine;
 public class CombatHandler : MonoBehaviour
 {
     
-    [SerializeField] private GridDetector gridDetector;
+    [SerializeField] private GridEngager gridDetector;
 
 
     public void AttackChecker(Vector2Int posAttacker, Vector2Int posDefender)

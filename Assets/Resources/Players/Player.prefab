@@ -118,9 +118,6 @@ GameObject:
   - component: {fileID: 4774588567208674277}
   - component: {fileID: 5377918319770948845}
   - component: {fileID: 6243142813136067381}
-  - component: {fileID: 6074646851718973828}
-  - component: {fileID: 5669717116322442743}
-  - component: {fileID: 8725102689027719818}
   - component: {fileID: 8489493817450006992}
   - component: {fileID: 965210594928441939}
   m_Layer: 7
@@ -218,46 +215,6 @@ MonoBehaviour:
     baseValue: 0
     posModVal: 0
     negModVal: 0
---- !u!114 &6074646851718973828
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9093407720557884438}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2dafb59e245293c4480a450c1bd4f8b8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  moveTilesRef: {fileID: 0}
-  gridDetector: {fileID: 0}
---- !u!114 &5669717116322442743
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9093407720557884438}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2fda0da5d26079149b98a56674cc296e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &8725102689027719818
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9093407720557884438}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7062a26dc00a0a343bc17276ddf0e4ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gridDetector: {fileID: 0}
-  position: {x: 0, y: 0}
 --- !u!114 &8489493817450006992
 MonoBehaviour:
   m_ObjectHideFlags: 0

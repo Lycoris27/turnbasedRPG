@@ -15,7 +15,7 @@ public class DefunctMovement : MonoBehaviour
     private Vector2Int[] directions = { new Vector2Int(0, 1), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(-1, 0) };
 
 
-    public GridDetector gridDetector;
+    public GridEngager gridDetector;
     public CharacterSheet characterSheet;
 
     [SerializeField] private bool canPlayerMove = true;

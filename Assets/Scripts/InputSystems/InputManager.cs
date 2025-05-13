@@ -15,8 +15,6 @@ public class InputManager : MonoBehaviour
     public static event System.Action<float> OnUIActivated;
     public static event System.Action<float> OnBackspace;
 
-    public GameObject cursor;
-
     public float holdTime = 0.5f; // Time to start continuous input
     public float continuousInputInterval = 0.1f; // Time interval for continuous input
 

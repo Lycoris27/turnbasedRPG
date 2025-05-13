@@ -10,7 +10,7 @@ public class TurnScript : MonoBehaviour
     private bool playersTurn = true; // Track whose turn it is
 
 
-    [SerializeField] private GridDetector gridDetector;
+    [SerializeField] private GridEngager gridDetector;
 
     public GameObject heldTile;
     public GameObject moveTilesRef;
@@ -97,7 +97,7 @@ public class TurnScript : MonoBehaviour
         //print("Engaging enemies turn");
         foreach (GameObject enemy in Enemies)
         {
-            enemy.GetComponent<CharacterAI>().ActivateMovement();
+            //enemy.GetComponent<CharacterAI>().ActivateMovement();
         }
         CheckIfTurnChange();
     }

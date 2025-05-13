@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class CharacterSheet : CharacterScript
-{ 
-
+{
+    public Vector2Int position;
     public int GetMovement()
     {
         return Mvmnt.GetValue();

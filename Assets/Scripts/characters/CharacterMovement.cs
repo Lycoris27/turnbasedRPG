@@ -7,7 +7,7 @@ using System.Linq;
 public class CharacterMovement : MonoBehaviour
 {
     [Header("Held Scripts")]
-    [SerializeField] private GridDetector gridDetector;
+    [SerializeField] private GridEngager gridDetector;
 
     [Header("Positions")]
     [SerializeField] private Vector2Int position;

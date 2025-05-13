@@ -10,7 +10,7 @@ public class CharacterPathfinding : MonoBehaviour
     private SortedList<int, Queue<Vector2Int>> sortList = new();
     private Queue<Vector2Int> backtrack;
 
-    private GridDetector gridDetector;
+    private GridEngager gridDetector;
     private CharacterMovement eMovement;
     private MovementDisplay eDisplay;
     private CharacterSheet eSheet;
@@ -24,7 +24,7 @@ public class CharacterPathfinding : MonoBehaviour
         eMovement = GetComponent<CharacterMovement>();
         eDisplay = GetComponent<MovementDisplay>();
         eSheet = GetComponent<CharacterSheet>();
-        gridDetector = GameObject.Find("LevelManager")?.GetComponent<GridDetector>();
+        gridDetector = GameObject.Find("LevelManager")?.GetComponent<GridEngager>();
     }
 
     public Dictionary<Vector2Int, int> BeginPathfinding()

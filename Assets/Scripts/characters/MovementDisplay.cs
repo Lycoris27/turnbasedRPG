@@ -8,7 +8,7 @@ public class MovementDisplay : MonoBehaviour
     [SerializeField] private GameObject moveTilesRef;
 
     [Header("Held Scripts")]
-    [SerializeField] private GridDetector gridDetector;
+    [SerializeField] private GridEngager gridDetector;
 
     // Movement and Attack Grids
     private Dictionary<Vector2Int, int> moveGrid = new();
